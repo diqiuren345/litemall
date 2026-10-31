@@ -26,7 +26,9 @@ services:
 
   # ==================== litemall 后端 ====================
   litemall:
-    image: openjdk:8-jre-alpine
+    # 课程材料给的是 openjdk:8-jre-alpine，该官方镜像已下架（拉取报 denied），
+    # 改用其官方继任者 eclipse-temurin:8-jre-alpine，JRE 8 行为一致
+    image: eclipse-temurin:8-jre-alpine
     container_name: litemall-app
     ports:
       - "8080:8080"
