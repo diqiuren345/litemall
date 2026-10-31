@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # ==================== MySQL ====================
+  # 宿主端口 3307（本机 3306 已被本地 MySQL80 占用）
+  mysql:
+    image: mysql:5.7
+    container_name: litemall-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: litemall123456
+      MYSQL_DATABASE: litemall
+      TZ: Asia/Shanghai
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --default-authentication-plugin=mysql_native_password
+      --lower_case_table_names=1
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/init-sql:/docker-entrypoint-initdb.d:ro
+    restart: always
+    networks:
+      - litemall-net
+
+  # ==================== litemall 后端 ====================
+  litemall:
+    image: openjdk:8-jre-alpine
+    container_name: litemall-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./litemall/litemall-all.jar:/app/litemall.jar
+      - litemall_storage:/storage
+      - litemall_logs:/logs
+    environment:
+      - TZ=Asia/Shanghai
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/litemall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=litemall123456
+      # litemall 实际使用 Druid 数据源，读取的是 spring.datasource.druid.* ——
+      # 只给 SPRING_DATASOURCE_URL 不生效（应用仍会连 localhost:3306），必须补这三个
+      - SPRING_DATASOURCE_DRUID_URL=jdbc:mysql://mysql:3306/litemall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_DRUID_USERNAME=root
+      - SPRING_DATASOURCE_DRUID_PASSWORD=litemall123456
+    command: java -Dfile.encoding=UTF-8 -jar /app/litemall.jar
+    depends_on:
+      - mysql
+    restart: always
+    networks:
+      - litemall-net
+
+  # ==================== SonarQube 社区版（内置 H2，简化部署） ====================
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    restart: always
+    networks:
+      - litemall-net
+
+  # ==================== Prometheus ====================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+    restart: always
+    networks:
+      - litemall-net
+
+  # ==================== Grafana ====================
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: always
+    networks:
+      - litemall-net
+
+volumes:
+  mysql_data:
+  litemall_storage:
+  litemall_logs:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  grafana_data:
+
+networks:
+  litemall-net:
+    driver: bridge

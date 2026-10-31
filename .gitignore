@@ -52,3 +52,9 @@ Servers
 .metadata
 upload
 gen_code
+
+# 实验环境本地产物（不入库）
+/litemall/litemall-all.jar
+/litemall/logs/
+/litemall/storage/
+/m2repo/

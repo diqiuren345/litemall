@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # litemall 需引入 spring-boot-starter-actuator + micrometer-registry-prometheus
+  # 并在配置中暴露 prometheus 端点后，此 target 才会 up
+  - job_name: 'litemall'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['litemall:8080']
