@@ -34,6 +34,10 @@ import static org.linlinjava.litemall.admin.util.AdminResponseCode.ORDER_PAY_FAI
 @Service
 
 public class AdminOrderService {
+    private static final String ORDER_ID_KEY = "orderId";
+    private static final String MSG_REFUND_FAILED = "订单退款失败";
+    private static final String MSG_ORDER_NO_PREFIX = "订单编号 ";
+
     private final Log logger = LogFactory.getLog(AdminOrderService.class);
 
     @Autowired
@@ -91,7 +95,7 @@ public class AdminOrderService {
      */
     @Transactional
     public Object refund(String body) {
-        Integer orderId = JacksonUtil.parseInteger(body, "orderId");
+        Integer orderId = JacksonUtil.parseInteger(body, ORDER_ID_KEY);
         String refundMoney = JacksonUtil.parseString(body, "refundMoney");
         if (orderId == null) {
             return ResponseUtil.badArgument();
@@ -128,15 +132,15 @@ public class AdminOrderService {
             wxPayRefundResult = wxPayService.refund(wxPayRefundRequest);
         } catch (WxPayException e) {
             logger.error(e.getMessage(), e);
-            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
+            return ResponseUtil.fail(ORDER_REFUND_FAILED, MSG_REFUND_FAILED);
         }
         if (!wxPayRefundResult.getReturnCode().equals("SUCCESS")) {
             logger.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
-            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
+            return ResponseUtil.fail(ORDER_REFUND_FAILED, MSG_REFUND_FAILED);
         }
         if (!wxPayRefundResult.getResultCode().equals("SUCCESS")) {
             logger.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
-            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
+            return ResponseUtil.fail(ORDER_REFUND_FAILED, MSG_REFUND_FAILED);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -177,7 +181,7 @@ public class AdminOrderService {
         notifyService.notifySmsTemplate(order.getMobile(), NotifyType.REFUND,
                 new String[]{order.getOrderSn().substring(8, 14)});
 
-        logHelper.logOrderSucceed("退款", "订单编号 " + order.getOrderSn());
+        logHelper.logOrderSucceed("退款", MSG_ORDER_NO_PREFIX + order.getOrderSn());
         return ResponseUtil.ok();
     }
 
@@ -192,7 +196,7 @@ public class AdminOrderService {
      * 失败则 { errno: XXX, errmsg: XXX }
      */
     public Object ship(String body) {
-        Integer orderId = JacksonUtil.parseInteger(body, "orderId");
+        Integer orderId = JacksonUtil.parseInteger(body, ORDER_ID_KEY);
         String shipSn = JacksonUtil.parseString(body, "shipSn");
         String shipChannel = JacksonUtil.parseString(body, "shipChannel");
         if (orderId == null || shipSn == null || shipChannel == null) {
@@ -222,7 +226,7 @@ public class AdminOrderService {
         // "您的订单已经发货，快递公司 {1}，快递单 {2} ，请注意查收"
         notifyService.notifySmsTemplate(order.getMobile(), NotifyType.SHIP, new String[]{shipChannel, shipSn});
 
-        logHelper.logOrderSucceed("发货", "订单编号 " + order.getOrderSn());
+        logHelper.logOrderSucceed("发货", MSG_ORDER_NO_PREFIX + order.getOrderSn());
         return ResponseUtil.ok();
     }
 
@@ -237,7 +241,7 @@ public class AdminOrderService {
      * 失败则 { errno: XXX, errmsg: XXX }
      */
     public Object delete(String body) {
-        Integer orderId = JacksonUtil.parseInteger(body, "orderId");
+        Integer orderId = JacksonUtil.parseInteger(body, ORDER_ID_KEY);
         LitemallOrder order = orderService.findById(orderId);
         if (order == null) {
             return ResponseUtil.badArgument();
@@ -254,7 +258,7 @@ public class AdminOrderService {
         orderService.deleteById(orderId);
         // 删除订单商品
         orderGoodsService.deleteByOrderId(orderId);
-        logHelper.logOrderSucceed("删除", "订单编号 " + order.getOrderSn());
+        logHelper.logOrderSucceed("删除", MSG_ORDER_NO_PREFIX + order.getOrderSn());
         return ResponseUtil.ok();
     }
 
@@ -291,7 +295,7 @@ public class AdminOrderService {
     }
 
     public Object pay(String body) {
-        Integer orderId = JacksonUtil.parseInteger(body, "orderId");
+        Integer orderId = JacksonUtil.parseInteger(body, ORDER_ID_KEY);
         String newMoney = JacksonUtil.parseString(body, "newMoney");
 
         if (orderId == null || StringUtils.isEmpty(newMoney)) {

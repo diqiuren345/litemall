@@ -1,7 +1,7 @@
 package org.linlinjava.litemall.db.service;
 
 import com.alibaba.druid.util.StringUtils;
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallRoleMapper;
 import org.linlinjava.litemall.db.domain.LitemallRole;
 import org.linlinjava.litemall.db.domain.LitemallRoleExample;
@@ -50,7 +50,7 @@ public class LitemallRoleService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return roleMapper.selectByExample(example);
     }
 

@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallCollectMapper;
 import org.linlinjava.litemall.db.domain.LitemallCollect;
 import org.linlinjava.litemall.db.domain.LitemallCollectExample;
@@ -36,7 +36,7 @@ public class LitemallCollectService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return collectMapper.selectByExample(example);
     }
 
@@ -78,7 +78,7 @@ public class LitemallCollectService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return collectMapper.selectByExample(example);
     }
 }

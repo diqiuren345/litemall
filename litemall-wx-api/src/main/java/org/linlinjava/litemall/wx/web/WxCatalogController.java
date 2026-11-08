@@ -25,6 +25,9 @@ import java.util.Map;
 @RequestMapping("/wx/catalog")
 @Validated
 public class WxCatalogController {
+    private static final String KEY_CURRENT_CATEGORY = "currentCategory";
+    private static final String KEY_CURRENT_SUB_CATEGORY = "currentSubCategory";
+
     private final Log logger = LogFactory.getLog(WxCatalogController.class);
 
     @Autowired
@@ -76,8 +79,8 @@ public class WxCatalogController {
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("categoryList", l1CatList);
-        data.put("currentCategory", currentCategory);
-        data.put("currentSubCategory", currentSubCategory);
+        data.put(KEY_CURRENT_CATEGORY, currentCategory);
+        data.put(KEY_CURRENT_SUB_CATEGORY, currentSubCategory);
         return ResponseUtil.ok(data);
     }
 
@@ -117,8 +120,8 @@ public class WxCatalogController {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("categoryList", l1CatList);
         data.put("allList", allList);
-        data.put("currentCategory", currentCategory);
-        data.put("currentSubCategory", currentSubCategory);
+        data.put(KEY_CURRENT_CATEGORY, currentCategory);
+        data.put(KEY_CURRENT_SUB_CATEGORY, currentSubCategory);
 
         //缓存数据
         HomeCacheManager.loadData(HomeCacheManager.CATALOG, data);
@@ -141,8 +144,8 @@ public class WxCatalogController {
         List<LitemallCategory> currentSubCategory = categoryService.queryByPid(currentCategory.getId());
 
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("currentCategory", currentCategory);
-        data.put("currentSubCategory", currentSubCategory);
+        data.put(KEY_CURRENT_CATEGORY, currentCategory);
+        data.put(KEY_CURRENT_SUB_CATEGORY, currentSubCategory);
         return ResponseUtil.ok(data);
     }
 }

@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallBrandMapper;
 import org.linlinjava.litemall.db.domain.LitemallBrand;
 import org.linlinjava.litemall.db.domain.LitemallBrand.Column;
@@ -24,7 +24,7 @@ public class LitemallBrandService {
         if (!StringUtils.isEmpty(sort) && !StringUtils.isEmpty(order)) {
             example.setOrderByClause(sort + " " + order);
         }
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return brandMapper.selectByExampleSelective(example, columns);
     }
 
@@ -52,7 +52,7 @@ public class LitemallBrandService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return brandMapper.selectByExample(example);
     }
 

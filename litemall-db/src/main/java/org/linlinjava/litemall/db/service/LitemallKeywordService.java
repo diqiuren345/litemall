@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallKeywordMapper;
 import org.linlinjava.litemall.db.domain.LitemallKeyword;
 import org.linlinjava.litemall.db.domain.LitemallKeywordExample;
@@ -32,7 +32,7 @@ public class LitemallKeywordService {
         LitemallKeywordExample example = new LitemallKeywordExample();
         example.setDistinct(true);
         example.or().andKeywordLike("%" + keyword + "%").andDeletedEqualTo(false);
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return keywordsMapper.selectByExampleSelective(example, LitemallKeyword.Column.keyword);
     }
 
@@ -52,7 +52,7 @@ public class LitemallKeywordService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return keywordsMapper.selectByExample(example);
     }
 

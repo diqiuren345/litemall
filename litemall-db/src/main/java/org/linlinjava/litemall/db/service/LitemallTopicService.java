@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallTopicMapper;
 import org.linlinjava.litemall.db.domain.LitemallGroupon;
 import org.linlinjava.litemall.db.domain.LitemallTopic;
@@ -15,19 +15,21 @@ import java.util.List;
 
 @Service
 public class LitemallTopicService {
+    private static final String COL_ADD_TIME = "add_time";
+
     @Resource
     private LitemallTopicMapper topicMapper;
     private Column[] columns = new Column[]{Column.id, Column.title, Column.subtitle, Column.price, Column.picUrl, Column.readCount};
 
     public List<LitemallTopic> queryList(int offset, int limit) {
-        return queryList(offset, limit, "add_time", "desc");
+        return queryList(offset, limit, COL_ADD_TIME, "desc");
     }
 
     public List<LitemallTopic> queryList(int offset, int limit, String sort, String order) {
         LitemallTopicExample example = new LitemallTopicExample();
         example.or().andDeletedEqualTo(false);
         example.setOrderByClause(sort + " " + order);
-        PageHelper.startPage(offset, limit);
+        PageMethod.startPage(offset, limit);
         return topicMapper.selectByExampleSelective(example, columns);
     }
 
@@ -48,19 +50,19 @@ public class LitemallTopicService {
         example.or().andIdEqualTo(id).andDeletedEqualTo(false);
         List<LitemallTopic> topics = topicMapper.selectByExample(example);
         if (topics.size() == 0) {
-            return queryList(offset, limit, "add_time", "desc");
+            return queryList(offset, limit, COL_ADD_TIME, "desc");
         }
         LitemallTopic topic = topics.get(0);
 
         example = new LitemallTopicExample();
         example.or().andIdNotEqualTo(topic.getId()).andDeletedEqualTo(false);
-        PageHelper.startPage(offset, limit);
+        PageMethod.startPage(offset, limit);
         List<LitemallTopic> relateds = topicMapper.selectByExampleWithBLOBs(example);
         if (relateds.size() != 0) {
             return relateds;
         }
 
-        return queryList(offset, limit, "add_time", "desc");
+        return queryList(offset, limit, COL_ADD_TIME, "desc");
     }
 
     public List<LitemallTopic> querySelective(String title, String subtitle, Integer page, Integer limit, String sort, String order) {
@@ -79,7 +81,7 @@ public class LitemallTopicService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return topicMapper.selectByExampleWithBLOBs(example);
     }
 

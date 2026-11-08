@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallAdminMapper;
 import org.linlinjava.litemall.db.domain.LitemallAdmin;
 import org.linlinjava.litemall.db.domain.LitemallAdmin.Column;
@@ -41,7 +41,7 @@ public class LitemallAdminService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return adminMapper.selectByExampleSelective(example, result);
     }
 

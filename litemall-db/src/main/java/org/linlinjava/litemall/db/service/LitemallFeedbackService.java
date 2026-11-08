@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallFeedbackMapper;
 import org.linlinjava.litemall.db.domain.LitemallFeedback;
 import org.linlinjava.litemall.db.domain.LitemallFeedbackExample;
@@ -42,7 +42,7 @@ public class LitemallFeedbackService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return feedbackMapper.selectByExample(example);
     }
 }

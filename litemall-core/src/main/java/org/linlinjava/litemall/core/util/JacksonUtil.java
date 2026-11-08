@@ -88,7 +88,8 @@ public class JacksonUtil {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
-        return null;
+        // 字段缺失或解析失败时返回 false，避免调用方拆箱 NPE
+        return Boolean.FALSE;
     }
 
     public static Short parseShort(String body, String field) {

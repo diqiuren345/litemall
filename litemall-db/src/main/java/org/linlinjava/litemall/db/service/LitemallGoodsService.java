@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallGoodsMapper;
 import org.linlinjava.litemall.db.domain.LitemallGoods;
 import org.linlinjava.litemall.db.domain.LitemallGoods.Column;
@@ -16,6 +16,8 @@ import java.util.List;
 
 @Service
 public class LitemallGoodsService {
+    private static final String ORDER_BY_ADD_TIME_DESC = "add_time desc";
+
     Column[] columns = new Column[]{Column.id, Column.name, Column.brief, Column.picUrl, Column.isHot, Column.isNew, Column.counterPrice, Column.retailPrice};
     @Resource
     private LitemallGoodsMapper goodsMapper;
@@ -30,8 +32,8 @@ public class LitemallGoodsService {
     public List<LitemallGoods> queryByHot(int offset, int limit) {
         LitemallGoodsExample example = new LitemallGoodsExample();
         example.or().andIsHotEqualTo(true).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
-        example.setOrderByClause("add_time desc");
-        PageHelper.startPage(offset, limit);
+        example.setOrderByClause(ORDER_BY_ADD_TIME_DESC);
+        PageMethod.startPage(offset, limit);
 
         return goodsMapper.selectByExampleSelective(example, columns);
     }
@@ -46,8 +48,8 @@ public class LitemallGoodsService {
     public List<LitemallGoods> queryByNew(int offset, int limit) {
         LitemallGoodsExample example = new LitemallGoodsExample();
         example.or().andIsNewEqualTo(true).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
-        example.setOrderByClause("add_time desc");
-        PageHelper.startPage(offset, limit);
+        example.setOrderByClause(ORDER_BY_ADD_TIME_DESC);
+        PageMethod.startPage(offset, limit);
 
         return goodsMapper.selectByExampleSelective(example, columns);
     }
@@ -64,7 +66,7 @@ public class LitemallGoodsService {
         LitemallGoodsExample example = new LitemallGoodsExample();
         example.or().andCategoryIdIn(catList).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
         example.setOrderByClause("add_time  desc");
-        PageHelper.startPage(offset, limit);
+        PageMethod.startPage(offset, limit);
 
         return goodsMapper.selectByExampleSelective(example, columns);
     }
@@ -81,8 +83,8 @@ public class LitemallGoodsService {
     public List<LitemallGoods> queryByCategory(Integer catId, int offset, int limit) {
         LitemallGoodsExample example = new LitemallGoodsExample();
         example.or().andCategoryIdEqualTo(catId).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
-        example.setOrderByClause("add_time desc");
-        PageHelper.startPage(offset, limit);
+        example.setOrderByClause(ORDER_BY_ADD_TIME_DESC);
+        PageMethod.startPage(offset, limit);
 
         return goodsMapper.selectByExampleSelective(example, columns);
     }
@@ -122,7 +124,7 @@ public class LitemallGoodsService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(offset, limit);
+        PageMethod.startPage(offset, limit);
 
         return goodsMapper.selectByExampleSelective(example, columns);
     }
@@ -146,7 +148,7 @@ public class LitemallGoodsService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return goodsMapper.selectByExampleWithBLOBs(example);
     }
 

@@ -1,7 +1,8 @@
 package org.linlinjava.litemall.db.service;
 
+import java.util.concurrent.ThreadLocalRandom;
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallOrderMapper;
 import org.linlinjava.litemall.db.dao.OrderMapper;
 import org.linlinjava.litemall.db.domain.LitemallOrder;
@@ -48,7 +49,7 @@ public class LitemallOrderService {
 
     private String getRandomNum(Integer num) {
         String base = "0123456789";
-        Random random = new Random();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < num; i++) {
             int number = random.nextInt(base.length());
@@ -87,7 +88,7 @@ public class LitemallOrderService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return litemallOrderMapper.selectByExample(example);
     }
 
@@ -116,7 +117,7 @@ public class LitemallOrderService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return litemallOrderMapper.selectByExample(example);
     }
 
@@ -238,7 +239,7 @@ public class LitemallOrderService {
             orderByClause = "o." + sort + " " + order +", o.id desc ";
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         Page<Map> list1 = (Page) orderMapper.getOrderIds(query, orderByClause);
         List<Integer> ids = new ArrayList<>();
         for (Map map : list1) {

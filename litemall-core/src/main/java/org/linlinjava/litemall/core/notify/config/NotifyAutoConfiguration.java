@@ -63,6 +63,7 @@ public class NotifyAutoConfiguration {
         //阿里云 必须加入配置 outlook配置又不需要 视情况而定.发送不成功多数是这里的配置问题
         properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         properties.put("mail.smtp.socketFactory.port", mailConfig.getPort());
+        properties.put("mail.smtp.ssl.checkserveridentity", true);
         properties.put("debug", true);
         mailSender.setJavaMailProperties(properties);
         return mailSender;

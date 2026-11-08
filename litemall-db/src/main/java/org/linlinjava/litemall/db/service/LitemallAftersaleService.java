@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallAftersaleMapper;
 import org.linlinjava.litemall.db.domain.*;
 import org.linlinjava.litemall.db.util.AftersaleConstant;
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class LitemallAftersaleService {
@@ -44,7 +44,7 @@ public class LitemallAftersaleService {
             example.setOrderByClause(LitemallAftersale.Column.addTime.desc());
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return aftersaleMapper.selectByExample(example);
     }
 
@@ -68,13 +68,13 @@ public class LitemallAftersaleService {
             example.setOrderByClause(LitemallAftersale.Column.addTime.desc());
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return aftersaleMapper.selectByExample(example);
     }
 
     private String getRandomNum(Integer num) {
         String base = "0123456789";
-        Random random = new Random();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < num; i++) {
             int number = random.nextInt(base.length());

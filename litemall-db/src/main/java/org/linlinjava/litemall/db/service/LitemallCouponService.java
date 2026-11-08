@@ -1,7 +1,7 @@
 package org.linlinjava.litemall.db.service;
 
 import com.alibaba.druid.util.StringUtils;
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallCouponMapper;
 import org.linlinjava.litemall.db.dao.LitemallCouponUserMapper;
 import org.linlinjava.litemall.db.domain.*;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,7 +52,7 @@ public class LitemallCouponService {
     public List<LitemallCoupon> queryList(LitemallCouponExample.Criteria criteria, int offset, int limit, String sort, String order) {
         criteria.andTypeEqualTo(CouponConstant.TYPE_COMMON).andStatusEqualTo(CouponConstant.STATUS_NORMAL).andDeletedEqualTo(false);
         criteria.example().setOrderByClause(sort + " " + order);
-        PageHelper.startPage(offset, limit);
+        PageMethod.startPage(offset, limit);
         return couponMapper.selectByExampleSelective(criteria.example(), result);
     }
 
@@ -123,7 +123,7 @@ public class LitemallCouponService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return couponMapper.selectByExample(example);
     }
 
@@ -146,7 +146,7 @@ public class LitemallCouponService {
         String base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         base += "0123456789";
 
-        Random random = new Random();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < num; i++) {
             int number = random.nextInt(base.length());

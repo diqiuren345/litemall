@@ -75,7 +75,7 @@ public class AdminAuthController {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(image, "jpeg", outputStream);
             String base64 = Base64.getEncoder().encodeToString(outputStream.toByteArray());
-            return "data:image/jpeg;base64," + base64.replaceAll("\r\n", "");
+            return "data:image/jpeg;base64," + base64.replace("\r\n", "");
         } catch (IOException e) {
             return null;
         }

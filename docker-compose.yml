@@ -46,6 +46,8 @@ services:
       - SPRING_DATASOURCE_DRUID_URL=jdbc:mysql://mysql:3306/litemall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_DRUID_USERNAME=root
       - SPRING_DATASOURCE_DRUID_PASSWORD=litemall123456
+      # JWT 签名密钥由部署环境注入（原代码硬编码，SonarQube S6437）
+      - LITEMALL_JWT_SECRET=X-Litemall-Token
     command: java -Dfile.encoding=UTF-8 -jar /app/litemall.jar
     depends_on:
       - mysql

@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallAdMapper;
 import org.linlinjava.litemall.db.domain.LitemallAd;
 import org.linlinjava.litemall.db.domain.LitemallAdExample;
@@ -38,7 +38,7 @@ public class LitemallAdService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return adMapper.selectByExample(example);
     }
 

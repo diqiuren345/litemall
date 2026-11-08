@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallNoticeAdminMapper;
 import org.linlinjava.litemall.db.domain.*;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class LitemallNoticeAdminService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return noticeAdminMapper.selectByExample(example);
     }
 

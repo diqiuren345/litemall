@@ -1,7 +1,7 @@
 package org.linlinjava.litemall.db.service;
 
 import com.alibaba.druid.util.StringUtils;
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallGoodsMapper;
 import org.linlinjava.litemall.db.dao.LitemallGrouponRulesMapper;
 import org.linlinjava.litemall.db.domain.LitemallGoods;
@@ -80,7 +80,7 @@ public class LitemallGrouponRulesService {
         LitemallGrouponRulesExample example = new LitemallGrouponRulesExample();
         example.or().andStatusEqualTo(GrouponConstant.RULE_STATUS_ON).andDeletedEqualTo(false);
         example.setOrderByClause(sort + " " + order);
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return mapper.selectByExample(example);
     }
 
@@ -114,7 +114,7 @@ public class LitemallGrouponRulesService {
         }
         criteria.andDeletedEqualTo(false);
 
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return mapper.selectByExample(example);
     }
 

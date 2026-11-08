@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallLogMapper;
 import org.linlinjava.litemall.db.domain.LitemallAd;
 import org.linlinjava.litemall.db.domain.LitemallLog;
@@ -40,7 +40,7 @@ public class LitemallLogService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return logMapper.selectByExample(example);
     }
 }

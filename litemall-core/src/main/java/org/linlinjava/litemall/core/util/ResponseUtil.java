@@ -40,17 +40,23 @@ import java.util.Map;
  * </ul>
  */
 public class ResponseUtil {
+    private static final String KEY_ERRNO = "errno";
+    private static final String KEY_ERRMSG = "errmsg";
+    private static final String KEY_TOTAL = "total";
+    private static final String KEY_LIMIT = "limit";
+    private static final String KEY_PAGES = "pages";
+
     public static Object ok() {
         Map<String, Object> obj = new HashMap<String, Object>();
-        obj.put("errno", 0);
-        obj.put("errmsg", "成功");
+        obj.put(KEY_ERRNO, 0);
+        obj.put(KEY_ERRMSG, "成功");
         return obj;
     }
 
     public static Object ok(Object data) {
         Map<String, Object> obj = new HashMap<String, Object>();
-        obj.put("errno", 0);
-        obj.put("errmsg", "成功");
+        obj.put(KEY_ERRNO, 0);
+        obj.put(KEY_ERRMSG, "成功");
         obj.put("data", data);
         return obj;
     }
@@ -61,15 +67,15 @@ public class ResponseUtil {
 
         if (list instanceof Page) {
             Page page = (Page) list;
-            data.put("total", page.getTotal());
+            data.put(KEY_TOTAL, page.getTotal());
             data.put("page", page.getPageNum());
-            data.put("limit", page.getPageSize());
-            data.put("pages", page.getPages());
+            data.put(KEY_LIMIT, page.getPageSize());
+            data.put(KEY_PAGES, page.getPages());
         } else {
-            data.put("total", list.size());
+            data.put(KEY_TOTAL, list.size());
             data.put("page", 1);
-            data.put("limit", list.size());
-            data.put("pages", 1);
+            data.put(KEY_LIMIT, list.size());
+            data.put(KEY_PAGES, 1);
         }
 
         return ok(data);
@@ -81,15 +87,15 @@ public class ResponseUtil {
 
         if (pagedList instanceof Page) {
             Page page = (Page) pagedList;
-            data.put("total", page.getTotal());
+            data.put(KEY_TOTAL, page.getTotal());
             data.put("page", page.getPageNum());
-            data.put("limit", page.getPageSize());
-            data.put("pages", page.getPages());
+            data.put(KEY_LIMIT, page.getPageSize());
+            data.put(KEY_PAGES, page.getPages());
         } else {
-            data.put("total", pagedList.size());
+            data.put(KEY_TOTAL, pagedList.size());
             data.put("page", 1);
-            data.put("limit", pagedList.size());
-            data.put("pages", 1);
+            data.put(KEY_LIMIT, pagedList.size());
+            data.put(KEY_PAGES, 1);
         }
 
         return ok(data);
@@ -97,22 +103,22 @@ public class ResponseUtil {
 
     public static Object fail() {
         Map<String, Object> obj = new HashMap<String, Object>();
-        obj.put("errno", -1);
-        obj.put("errmsg", "错误");
+        obj.put(KEY_ERRNO, -1);
+        obj.put(KEY_ERRMSG, "错误");
         return obj;
     }
 
     public static Object fail(int errno, String errmsg) {
         Map<String, Object> obj = new HashMap<String, Object>();
-        obj.put("errno", errno);
-        obj.put("errmsg", errmsg);
+        obj.put(KEY_ERRNO, errno);
+        obj.put(KEY_ERRMSG, errmsg);
         return obj;
     }
 
     public static Object fail(int errno, String errmsg, String data) {
         Map<String, Object> obj = new HashMap<String, Object>(3);
-        obj.put("errno", errno);
-        obj.put("errmsg", errmsg);
+        obj.put(KEY_ERRNO, errno);
+        obj.put(KEY_ERRMSG, errmsg);
         obj.put("data", data);
         return obj;
     }

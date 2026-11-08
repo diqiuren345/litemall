@@ -22,67 +22,50 @@ public class PermissionUtil {
         List<PermVo> root = new ArrayList<>();
         for (Permission permission : permissions) {
             RequiresPermissions requiresPermissions = permission.getRequiresPermissions();
-            RequiresPermissionsDesc requiresPermissionsDesc = permission.getRequiresPermissionsDesc();
-            String api = permission.getApi();
+            RequiresPermissionsDesc desc = permission.getRequiresPermissionsDesc();
 
-            String[] menus = requiresPermissionsDesc.menu();
+            String[] menus = desc.menu();
             if (menus.length != 2) {
-                throw new RuntimeException("目前只支持两级菜单");
-            }
-            String menu1 = menus[0];
-            PermVo perm1 = null;
-            for (PermVo permVo : root) {
-                if (permVo.getLabel().equals(menu1)) {
-                    perm1 = permVo;
-                    break;
-                }
-            }
-            if (perm1 == null) {
-                perm1 = new PermVo();
-                perm1.setId(menu1);
-                perm1.setLabel(menu1);
-                perm1.setChildren(new ArrayList<>());
-                root.add(perm1);
-            }
-            String menu2 = menus[1];
-            PermVo perm2 = null;
-            for (PermVo permVo : perm1.getChildren()) {
-                if (permVo.getLabel().equals(menu2)) {
-                    perm2 = permVo;
-                    break;
-                }
-            }
-            if (perm2 == null) {
-                perm2 = new PermVo();
-                perm2.setId(menu2);
-                perm2.setLabel(menu2);
-                perm2.setChildren(new ArrayList<>());
-                perm1.getChildren().add(perm2);
+                throw new IllegalStateException("目前只支持两级菜单");
             }
 
-            String button = requiresPermissionsDesc.button();
-            PermVo leftPerm = null;
-            for (PermVo permVo : perm2.getChildren()) {
-                if (permVo.getLabel().equals(button)) {
-                    leftPerm = permVo;
-                    break;
-                }
-            }
-            if (leftPerm == null) {
-                leftPerm = new PermVo();
-                leftPerm.setId(requiresPermissions.value()[0]);
-                leftPerm.setLabel(requiresPermissionsDesc.button());
-                leftPerm.setApi(api);
-                perm2.getChildren().add(leftPerm);
-            } else {
-                // TODO
-                // 目前限制Controller里面每个方法的RequiresPermissionsDesc注解是唯一的
-                // 如果允许相同，可能会造成内部权限不一致。
-                throw new RuntimeException("权限已经存在，不能添加新权限");
-            }
+            PermVo menuPerm = findOrCreateByLabel(root, menus[0]);
+            PermVo subMenuPerm = findOrCreateByLabel(menuPerm.getChildren(), menus[1]);
 
+            String button = desc.button();
+            if (findByLabel(subMenuPerm.getChildren(), button) != null) {
+                // 目前限制 Controller 每个方法的 RequiresPermissionsDesc 唯一，
+                // 重复说明权限定义冲突，内部权限可能不一致
+                throw new IllegalStateException("权限已经存在，不能添加新权限");
+            }
+            PermVo buttonPerm = new PermVo();
+            buttonPerm.setId(requiresPermissions.value()[0]);
+            buttonPerm.setLabel(button);
+            buttonPerm.setApi(permission.getApi());
+            subMenuPerm.getChildren().add(buttonPerm);
         }
         return root;
+    }
+
+    private static PermVo findByLabel(List<PermVo> perms, String label) {
+        for (PermVo perm : perms) {
+            if (perm.getLabel().equals(label)) {
+                return perm;
+            }
+        }
+        return null;
+    }
+
+    private static PermVo findOrCreateByLabel(List<PermVo> perms, String label) {
+        PermVo perm = findByLabel(perms, label);
+        if (perm == null) {
+            perm = new PermVo();
+            perm.setId(label);
+            perm.setLabel(label);
+            perm.setChildren(new ArrayList<>());
+            perms.add(perm);
+        }
+        return perm;
     }
 
     public static List<Permission> listPermission(ApplicationContext context, String basicPackage) {
@@ -113,33 +96,31 @@ public class PermissionUtil {
                     api = clazzRequestMapping.value()[0];
                 }
 
-                PostMapping postMapping = AnnotationUtils.getAnnotation(method, PostMapping.class);
-                if (postMapping != null) {
-                    api = "POST " + api + postMapping.value()[0];
-
-                    Permission permission = new Permission();
-                    permission.setRequiresPermissions(requiresPermissions);
-                    permission.setRequiresPermissionsDesc(requiresPermissionsDesc);
-                    permission.setApi(api);
-                    permissions.add(permission);
-                    continue;
-                }
-                GetMapping getMapping = AnnotationUtils.getAnnotation(method, GetMapping.class);
-                if (getMapping != null) {
-                    api = "GET " + api + getMapping.value()[0];
-                    Permission permission = new Permission();
-                    permission.setRequiresPermissions(requiresPermissions);
-                    permission.setRequiresPermissionsDesc(requiresPermissionsDesc);
-                    permission.setApi(api);
-                    permissions.add(permission);
-                    continue;
-                }
-                // TODO
-                // 这里只支持GetMapping注解或者PostMapping注解，应该进一步提供灵活性
-                throw new RuntimeException("目前权限管理应该在method的前面使用GetMapping注解或者PostMapping注解");
+                permissions.add(buildPermission(method, requiresPermissions, requiresPermissionsDesc, api));
             }
         }
         return permissions;
+    }
+
+    private static Permission buildPermission(Method method, RequiresPermissions requiresPermissions,
+                                              RequiresPermissionsDesc desc, String baseApi) {
+        PostMapping postMapping = AnnotationUtils.getAnnotation(method, PostMapping.class);
+        String api;
+        if (postMapping != null) {
+            api = "POST " + baseApi + postMapping.value()[0];
+        } else {
+            GetMapping getMapping = AnnotationUtils.getAnnotation(method, GetMapping.class);
+            if (getMapping == null) {
+                // 这里只支持 GetMapping 或 PostMapping，应该进一步提供灵活性
+                throw new IllegalStateException("目前权限管理应该在method的前面使用GetMapping注解或者PostMapping注解");
+            }
+            api = "GET " + baseApi + getMapping.value()[0];
+        }
+        Permission permission = new Permission();
+        permission.setRequiresPermissions(requiresPermissions);
+        permission.setRequiresPermissionsDesc(desc);
+        permission.setApi(api);
+        return permission;
     }
 
     public static Set<String> listPermissionString(List<Permission> permissions) {

@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallCategoryMapper;
 import org.linlinjava.litemall.db.domain.LitemallCategory;
 import org.linlinjava.litemall.db.domain.LitemallCategoryExample;
@@ -20,14 +20,14 @@ public class LitemallCategoryService {
     public List<LitemallCategory> queryL1WithoutRecommend(int offset, int limit) {
         LitemallCategoryExample example = new LitemallCategoryExample();
         example.or().andLevelEqualTo("L1").andNameNotEqualTo("推荐").andDeletedEqualTo(false);
-        PageHelper.startPage(offset, limit);
+        PageMethod.startPage(offset, limit);
         return categoryMapper.selectByExample(example);
     }
 
     public List<LitemallCategory> queryL1(int offset, int limit) {
         LitemallCategoryExample example = new LitemallCategoryExample();
         example.or().andLevelEqualTo("L1").andDeletedEqualTo(false);
-        PageHelper.startPage(offset, limit);
+        PageMethod.startPage(offset, limit);
         return categoryMapper.selectByExample(example);
     }
 
@@ -69,7 +69,7 @@ public class LitemallCategoryService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return categoryMapper.selectByExample(example);
     }
 

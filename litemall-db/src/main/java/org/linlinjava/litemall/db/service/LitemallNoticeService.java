@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallNoticeMapper;
 import org.linlinjava.litemall.db.domain.LitemallNotice;
 import org.linlinjava.litemall.db.domain.LitemallNoticeAdmin;
@@ -35,7 +35,7 @@ public class LitemallNoticeService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return noticeMapper.selectByExample(example);
     }
 

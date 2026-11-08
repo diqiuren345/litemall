@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallStorageMapper;
 import org.linlinjava.litemall.db.domain.LitemallStorage;
 import org.linlinjava.litemall.db.domain.LitemallStorageExample;
@@ -59,7 +59,7 @@ public class LitemallStorageService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return storageMapper.selectByExample(example);
     }
 }

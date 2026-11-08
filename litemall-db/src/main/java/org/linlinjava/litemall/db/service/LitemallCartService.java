@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallCartMapper;
 import org.linlinjava.litemall.db.domain.LitemallCart;
 import org.linlinjava.litemall.db.domain.LitemallCartExample;
@@ -96,7 +96,7 @@ public class LitemallCartService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, limit);
+        PageMethod.startPage(page, limit);
         return cartMapper.selectByExample(example);
     }
 

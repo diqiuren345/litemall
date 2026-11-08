@@ -31,6 +31,8 @@ import java.util.List;
 @RequestMapping("/wx/coupon")
 @Validated
 public class WxCouponController {
+    private static final String MSG_COUPON_CLAIMED = "优惠券已兑换";
+
     private final Log logger = LogFactory.getLog(WxCouponController.class);
 
     @Autowired
@@ -272,14 +274,14 @@ public class WxCouponController {
         Integer total = coupon.getTotal();
         Integer totalCoupons = couponUserService.countCoupon(couponId);
         if((total != 0) && (totalCoupons >= total)){
-            return ResponseUtil.fail(WxResponseCode.COUPON_EXCEED_LIMIT, "优惠券已兑换");
+            return ResponseUtil.fail(WxResponseCode.COUPON_EXCEED_LIMIT, MSG_COUPON_CLAIMED);
         }
 
         // 当前用户已领取数量和用户限领数量比较
         Integer limit = coupon.getLimit().intValue();
         Integer userCounpons = couponUserService.countUserAndCoupon(userId, couponId);
         if((limit != 0) && (userCounpons >= limit)){
-            return ResponseUtil.fail(WxResponseCode.COUPON_EXCEED_LIMIT, "优惠券已兑换");
+            return ResponseUtil.fail(WxResponseCode.COUPON_EXCEED_LIMIT, MSG_COUPON_CLAIMED);
         }
 
         // 优惠券分发类型
@@ -298,7 +300,7 @@ public class WxCouponController {
         // 优惠券状态，已下架或者过期不能领取
         Short status = coupon.getStatus();
         if(status.equals(CouponConstant.STATUS_OUT)){
-            return ResponseUtil.fail(WxResponseCode.COUPON_EXCEED_LIMIT, "优惠券已兑换");
+            return ResponseUtil.fail(WxResponseCode.COUPON_EXCEED_LIMIT, MSG_COUPON_CLAIMED);
         }
         else if(status.equals(CouponConstant.STATUS_EXPIRED)){
             return ResponseUtil.fail(WxResponseCode.COUPON_RECEIVE_FAIL, "优惠券已经过期");

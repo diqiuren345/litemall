@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallCommentMapper;
 import org.linlinjava.litemall.db.domain.LitemallComment;
 import org.linlinjava.litemall.db.domain.LitemallCommentExample;
@@ -20,7 +20,7 @@ public class LitemallCommentService {
         LitemallCommentExample example = new LitemallCommentExample();
         example.setOrderByClause(LitemallComment.Column.addTime.desc());
         example.or().andValueIdEqualTo(id).andTypeEqualTo((byte) 0).andDeletedEqualTo(false);
-        PageHelper.startPage(offset, limit);
+        PageMethod.startPage(offset, limit);
         return commentMapper.selectByExample(example);
     }
 
@@ -34,7 +34,7 @@ public class LitemallCommentService {
         } else {
             throw new RuntimeException("showType不支持");
         }
-        PageHelper.startPage(offset, limit);
+        PageMethod.startPage(offset, limit);
         return commentMapper.selectByExample(example);
     }
 
@@ -75,7 +75,7 @@ public class LitemallCommentService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return commentMapper.selectByExample(example);
     }
 

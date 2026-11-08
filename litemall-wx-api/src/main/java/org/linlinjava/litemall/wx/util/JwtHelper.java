@@ -15,8 +15,8 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class JwtHelper {
-	// 秘钥
-	static final String SECRET = "X-Litemall-Token";
+	// 秘钥：由部署环境注入，见 docker-compose.yml 的 LITEMALL_JWT_SECRET
+	static final String SECRET = resolveSecret();
 	// 签名是有谁生成
 	static final String ISSUSER = "LITEMALL";
 	// 签名的主题
@@ -25,6 +25,14 @@ public class JwtHelper {
 	static final String AUDIENCE = "MINIAPP";
 	
 	
+	private static String resolveSecret() {
+		String secret = System.getenv("LITEMALL_JWT_SECRET");
+		if (secret == null || secret.trim().isEmpty()) {
+			throw new IllegalStateException("未配置环境变量 LITEMALL_JWT_SECRET");
+		}
+		return secret;
+	}
+
 	public String createToken(Integer userId){
 		try {
 		    Algorithm algorithm = Algorithm.HMAC256(SECRET);

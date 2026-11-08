@@ -1,7 +1,7 @@
 package org.linlinjava.litemall.db.service;
 
 import com.alibaba.druid.util.StringUtils;
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallGrouponMapper;
 import org.linlinjava.litemall.db.domain.LitemallGroupon;
 import org.linlinjava.litemall.db.domain.LitemallGrouponExample;
@@ -14,6 +14,8 @@ import java.util.List;
 
 @Service
 public class LitemallGrouponService {
+    private static final String ORDER_BY_ADD_TIME_DESC = "add_time desc";
+
     @Resource
     private LitemallGrouponMapper mapper;
 
@@ -26,7 +28,7 @@ public class LitemallGrouponService {
     public List<LitemallGroupon> queryMyGroupon(Integer userId) {
         LitemallGrouponExample example = new LitemallGrouponExample();
         example.or().andUserIdEqualTo(userId).andCreatorUserIdEqualTo(userId).andGrouponIdEqualTo(0).andStatusNotEqualTo(GrouponConstant.STATUS_NONE).andDeletedEqualTo(false);
-        example.orderBy("add_time desc");
+        example.orderBy(ORDER_BY_ADD_TIME_DESC);
         return mapper.selectByExample(example);
     }
 
@@ -39,7 +41,7 @@ public class LitemallGrouponService {
     public List<LitemallGroupon> queryMyJoinGroupon(Integer userId) {
         LitemallGrouponExample example = new LitemallGrouponExample();
         example.or().andUserIdEqualTo(userId).andGrouponIdNotEqualTo(0).andStatusNotEqualTo(GrouponConstant.STATUS_NONE).andDeletedEqualTo(false);
-        example.orderBy("add_time desc");
+        example.orderBy(ORDER_BY_ADD_TIME_DESC);
         return mapper.selectByExample(example);
     }
 
@@ -64,7 +66,7 @@ public class LitemallGrouponService {
     public List<LitemallGroupon> queryJoinRecord(Integer id) {
         LitemallGrouponExample example = new LitemallGrouponExample();
         example.or().andGrouponIdEqualTo(id).andStatusNotEqualTo(GrouponConstant.STATUS_NONE).andDeletedEqualTo(false);
-        example.orderBy("add_time desc");
+        example.orderBy(ORDER_BY_ADD_TIME_DESC);
         return mapper.selectByExample(example);
     }
 
@@ -150,7 +152,7 @@ public class LitemallGrouponService {
         criteria.andStatusNotEqualTo(GrouponConstant.STATUS_NONE);
         criteria.andGrouponIdEqualTo(0);
 
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return mapper.selectByExample(example);
     }
 

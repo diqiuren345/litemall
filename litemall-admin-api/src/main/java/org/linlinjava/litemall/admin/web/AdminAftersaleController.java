@@ -37,6 +37,8 @@ import static org.linlinjava.litemall.admin.util.AdminResponseCode.ORDER_REFUND_
 @RequestMapping("/admin/aftersale")
 @Validated
 public class AdminAftersaleController {
+    private static final String MSG_REFUND_FAILED = "订单退款失败";
+
     private final Log logger = LogFactory.getLog(AdminAftersaleController.class);
 
     @Autowired
@@ -191,15 +193,15 @@ public class AdminAftersaleController {
             wxPayRefundResult = wxPayService.refund(wxPayRefundRequest);
         } catch (WxPayException e) {
             logger.error(e.getMessage(), e);
-            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
+            return ResponseUtil.fail(ORDER_REFUND_FAILED, MSG_REFUND_FAILED);
         }
         if (!wxPayRefundResult.getReturnCode().equals("SUCCESS")) {
             logger.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
-            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
+            return ResponseUtil.fail(ORDER_REFUND_FAILED, MSG_REFUND_FAILED);
         }
         if (!wxPayRefundResult.getResultCode().equals("SUCCESS")) {
             logger.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
-            return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单退款失败");
+            return ResponseUtil.fail(ORDER_REFUND_FAILED, MSG_REFUND_FAILED);
         }
 
         aftersaleOne.setStatus(AftersaleConstant.STATUS_REFUND);

@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import org.linlinjava.litemall.db.dao.LitemallFootprintMapper;
 import org.linlinjava.litemall.db.domain.LitemallFootprint;
 import org.linlinjava.litemall.db.domain.LitemallFootprintExample;
@@ -20,7 +20,7 @@ public class LitemallFootprintService {
         LitemallFootprintExample example = new LitemallFootprintExample();
         example.or().andUserIdEqualTo(userId).andDeletedEqualTo(false);
         example.setOrderByClause(LitemallFootprint.Column.addTime.desc());
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return footprintMapper.selectByExample(example);
     }
 
@@ -60,7 +60,7 @@ public class LitemallFootprintService {
             example.setOrderByClause(sort + " " + order);
         }
 
-        PageHelper.startPage(page, size);
+        PageMethod.startPage(page, size);
         return footprintMapper.selectByExample(example);
     }
 }

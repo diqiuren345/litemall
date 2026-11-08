@@ -37,6 +37,8 @@ import static org.linlinjava.litemall.wx.util.WxResponseCode.*;
 @RequestMapping("/wx/groupon")
 @Validated
 public class WxGrouponController {
+    private static final String KEY_GROUPON = "groupon";
+
     private final Log logger = LogFactory.getLog(WxGrouponController.class);
 
     @Autowired
@@ -168,7 +170,7 @@ public class WxGrouponController {
         result.put("linkGrouponId", linkGrouponId);
         result.put("creator", creator);
         result.put("joiners", joiners);
-        result.put("groupon", groupon);
+        result.put(KEY_GROUPON, groupon);
         result.put("rules", rules);
         return ResponseUtil.ok(result);
     }
@@ -197,7 +199,7 @@ public class WxGrouponController {
         }
 
         Map<String, Object> result = new HashMap<>();
-        result.put("groupon", groupon);
+        result.put(KEY_GROUPON, groupon);
         result.put("goods", goods);
 
         return ResponseUtil.ok(result);
@@ -236,7 +238,7 @@ public class WxGrouponController {
             Map<String, Object> grouponVo = new HashMap<>();
             //填充团购信息
             grouponVo.put("id", groupon.getId());
-            grouponVo.put("groupon", groupon);
+            grouponVo.put(KEY_GROUPON, groupon);
             grouponVo.put("rules", rules);
             grouponVo.put("creator", creator.getNickname());
 
